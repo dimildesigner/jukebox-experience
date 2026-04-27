@@ -1,6 +1,7 @@
 export default class AudioEngine {
   constructor() {
     this.audio = new Audio();
+    this.audio.crossOrigin = "anonymous";
 
     this.scratch = new Audio("/audio/scratch.mp3");
     this.scratch.volume = 0.5;
@@ -13,25 +14,20 @@ export default class AudioEngine {
 
     this.currentTrack = 0;
     this.audio.src = this.tracks[this.currentTrack];
-
     this.audio.loop = true;
     this.isPlaying = false;
 
     this.context = null;
     this.analyser = null;
+    this.source = null; // ← guarda referência ao MediaElementSource
   }
 
-  // controla velocidade do áudio
   setPlaybackRate(rate) {
     if (!this.audio) return;
-
-    // limita para não quebrar o áudio
     const clamped = Math.max(0.5, Math.min(2, rate));
-
     this.audio.playbackRate = clamped;
   }
 
-  // altera pich
   setDetune(value) {
     if (this.source && this.source.detune) {
       this.source.detune.value = value;
@@ -39,23 +35,29 @@ export default class AudioEngine {
   }
 
   initAudio() {
+    // Já inicializado — não recria
     if (this.context) return;
 
     this.context = new (window.AudioContext || window.webkitAudioContext)();
 
-    const source = this.context.createMediaElementSource(this.audio);
+    // Cria o source UMA única vez para this.audio
+    this.source = this.context.createMediaElementSource(this.audio);
     this.analyser = this.context.createAnalyser();
-
-    source.connect(this.analyser);
-    this.analyser.connect(this.context.destination);
-
     this.analyser.fftSize = 256;
+
+    this.source.connect(this.analyser);
+    this.analyser.connect(this.context.destination);
   }
 
   play() {
     this.initAudio();
 
-    this.audio.play().catch((e) => {
+    // Retoma o contexto se estiver suspenso (política de autoplay)
+    if (this.context && this.context.state === "suspended") {
+      this.context.resume();
+    }
+
+    this.audio.play().catch(() => {
       console.warn("⚠️ Clique necessário para iniciar áudio");
     });
 
@@ -67,21 +69,18 @@ export default class AudioEngine {
     this.isPlaying = false;
   }
 
-  // UI para carregar música de URL (ex: preview do Spotify)
+  // Carrega preview de URL externa via proxy do servidor (resolve CORS do iTunes)
   loadFromUrl(url) {
     if (!url) {
       console.log("❌ música sem preview");
       return;
     }
 
-    // Reinicia o contexto de áudio se necessário (evita conflito com MediaElementSource)
-    if (this.context) {
-      this.context.close();
-      this.context = null;
-      this.analyser = null;
-    }
+    const proxyUrl = `https://jukebox-experience.onrender.com/proxy?url=${encodeURIComponent(url)}`;
 
-    this.audio.src = url;
+    // Troca o src sem recriar o AudioContext nem o MediaElementSource
+    this.audio.pause();
+    this.audio.src = proxyUrl;
     this.audio.loop = false;
 
     this.play();
@@ -98,15 +97,10 @@ export default class AudioEngine {
   nextTrack() {
     this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
 
-    // Reinicia contexto para evitar conflito com MediaElementSource
-    if (this.context) {
-      this.context.close();
-      this.context = null;
-      this.analyser = null;
-    }
-
+    this.audio.pause();
     this.audio.src = this.tracks[this.currentTrack];
     this.audio.loop = true;
+
     this.play();
   }
 
@@ -117,19 +111,14 @@ export default class AudioEngine {
     this.analyser.getByteFrequencyData(data);
 
     let sum = 0;
-    for (let i = 0; i < data.length; i++) {
-      sum += data[i];
-    }
+    for (let i = 0; i < data.length; i++) sum += data[i];
 
     return sum / data.length / 255;
   }
 
   playScratch() {
     if (!this.scratch) return;
-
-    // reinicia o som
     this.scratch.currentTime = 0;
-
     this.scratch.play().catch(() => {});
   }
 }
