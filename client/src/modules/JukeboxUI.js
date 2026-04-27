@@ -122,27 +122,43 @@ export default class JukeboxUI {
 
     const query = parts.join(" ");
 
+    this.searchBtn.innerText = "Buscando...";
+    this.searchBtn.disabled = true;
+
     try {
       const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
-      // const res = await fetch(
-      //   `http://localhost:3001/search?q=${encodeURIComponent(query)}`,
-      // );
 
       const data = await res.json();
 
       // 🧠 DEBUG AQUI
       console.log("🔍 resposta completa:", data);
 
+      // ❌ Erro vindo do servidor (credenciais, Spotify, etc.)
+      if (data.error) {
+        const msg = typeof data.error === "string" ? data.error : data.error.message || JSON.stringify(data.error);
+        console.error("❌ Erro da API:", msg);
+        this.showError(`Erro: ${msg}`);
+        return;
+      }
+
       if (!data.tracks || !data.tracks.items) {
         console.warn("⚠️ resposta inesperada:", data);
-        alert("Nenhum resultado encontrado ou erro na API");
+        this.showError("Nenhum resultado encontrado");
         return;
       }
 
       this.renderResults(data.tracks.items);
     } catch (err) {
       console.error("Erro na busca:", err);
+      this.showError("Erro de conexão com o servidor");
+    } finally {
+      this.searchBtn.innerText = "Buscar";
+      this.searchBtn.disabled = false;
     }
+  }
+
+  showError(msg) {
+    this.resultList.innerHTML = `<div style="color: red; padding: 10px; font-size: 13px;">${msg}</div>`;
   }
 
   renderResults(tracks) {
@@ -175,3 +191,7 @@ export default class JukeboxUI {
     });
   }
 }
+
+
+
+// versão Cloud IA
