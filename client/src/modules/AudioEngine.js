@@ -60,15 +60,11 @@ export default class AudioEngine {
     });
 
     this.isPlaying = true;
-
-    this.sound.play();
   }
 
   pause() {
     this.audio.pause();
     this.isPlaying = false;
-
-    this.sound.pause();
   }
 
   // UI para carregar música de URL (ex: preview do Spotify)
@@ -78,14 +74,17 @@ export default class AudioEngine {
       return;
     }
 
-    const listener = this.listener;
+    // Reinicia o contexto de áudio se necessário (evita conflito com MediaElementSource)
+    if (this.context) {
+      this.context.close();
+      this.context = null;
+      this.analyser = null;
+    }
 
-    const audioLoader = new THREE.AudioLoader();
+    this.audio.src = url;
+    this.audio.loop = false;
 
-    audioLoader.load(url, (buffer) => {
-      this.sound.setBuffer(buffer);
-      this.sound.play();
-    });
+    this.play();
   }
 
   toggle() {
@@ -99,7 +98,15 @@ export default class AudioEngine {
   nextTrack() {
     this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
 
+    // Reinicia contexto para evitar conflito com MediaElementSource
+    if (this.context) {
+      this.context.close();
+      this.context = null;
+      this.analyser = null;
+    }
+
     this.audio.src = this.tracks[this.currentTrack];
+    this.audio.loop = true;
     this.play();
   }
 
