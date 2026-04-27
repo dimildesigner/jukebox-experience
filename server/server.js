@@ -17,7 +17,6 @@ async function getAccessToken() {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-  // ✅ Validação antecipada das credenciais
   if (!clientId || !clientSecret) {
     throw new Error(
       "SPOTIFY_CLIENT_ID e SPOTIFY_CLIENT_SECRET não configurados nas variáveis de ambiente"
@@ -39,12 +38,20 @@ async function getAccessToken() {
     }),
   });
 
+  const contentType = response.headers.get("content-type") || "";
+
+  // Garante que a resposta do token também é JSON
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
+    console.error("💥 Spotify retornou texto no token (HTTP", response.status, "):", text);
+    throw new Error(`Spotify bloqueou autenticação (HTTP ${response.status}): ${text}`);
+  }
+
   const data = await response.json();
 
   console.log("🔐 resposta token status:", response.status);
 
   if (!data.access_token) {
-    // Loga o erro completo do Spotify para facilitar diagnóstico
     console.error("💥 Spotify recusou as credenciais:", JSON.stringify(data));
     throw new Error(
       data.error_description || data.error || "Spotify não retornou access_token"
@@ -57,11 +64,11 @@ async function getAccessToken() {
   console.log("✅ Token válido gerado, expira em:", data.expires_in, "s");
 }
 
-// 🎯 GARANTIR TOKEN VÁLIDO — agora relança o erro para quem chamou tratar
+// 🎯 GARANTIR TOKEN VÁLIDO
 async function ensureToken() {
   if (!accessToken || Date.now() > tokenExpiresAt) {
     console.log("🔄 Gerando novo token...");
-    await getAccessToken(); // lança erro se falhar
+    await getAccessToken();
   }
 }
 
@@ -73,6 +80,16 @@ async function spotifySearch(query) {
       headers: { Authorization: `Bearer ${accessToken}` },
     }
   );
+
+  const contentType = response.headers.get("content-type") || "";
+
+  // ⚠️ Spotify às vezes retorna texto puro (ex: "Active preview mode...") em vez de JSON
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
+    console.error("⚠️ Spotify retornou texto puro (HTTP", response.status, "):", text);
+    throw new Error(`Spotify bloqueou a requisição (HTTP ${response.status}): ${text}`);
+  }
+
   return response.json();
 }
 
@@ -96,12 +113,12 @@ app.get("/search", async (req, res) => {
     // 🔄 TOKEN EXPIRADO (401) — renova uma vez e tenta novamente
     if (data.error && data.error.status === 401) {
       console.log("🔄 Token expirado, renovando...");
-      accessToken = null; // força renovação
+      accessToken = null;
       await ensureToken();
       data = await spotifySearch(query);
     }
 
-    // ❌ Outros erros do Spotify — loga e repassa com status correto
+    // ❌ Outros erros do Spotify
     if (data.error) {
       console.error("❌ Erro da API Spotify:", JSON.stringify(data.error));
       return res
@@ -120,6 +137,3 @@ app.get("/search", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server rodando em http://localhost:${PORT}`);
 });
-
-
-// versão Cloud IA
