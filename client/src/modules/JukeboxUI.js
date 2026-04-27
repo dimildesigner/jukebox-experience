@@ -14,8 +14,8 @@ export default class JukeboxUI {
     this.button.style = `
       position: fixed;
       top: 20px;
-      left: 20px;
-      font-size: 32px;
+      left: 80px;
+      font-size: 36px;
       cursor: pointer;
       z-index: 10;
       color: white;
@@ -27,14 +27,15 @@ export default class JukeboxUI {
     this.panel = document.createElement("div");
     this.panel.style = `
       position: fixed;
-      top: 80px;
-      left: 20px;
+      top: 70px;
+      left: 40px;
       width: 380px;
-      background: rgba(254, 248, 236, 0.8);
-      padding: 10px;
+      background: rgba(245, 226, 170, 0.9);
+      padding: 12px;
       display: none;
       z-index: 10;
-      border-radius: 10px;
+      border: 6px solid #c9985d;
+      border-radius: 8px;
     `;
 
     // 🔍 INPUTS
@@ -46,14 +47,16 @@ export default class JukeboxUI {
     this.searchBtn = document.createElement("button");
     this.searchBtn.innerText = "Buscar";
     this.searchBtn.style = `
-      width: 100%;
-      padding: 20px;
-      margin-top: 20px;
+      width: 50%;
+      padding: 10px;
+      margin-top: 10px;
       cursor: pointer;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: bold;
-      background: #71c837;
-      color: #000000;
+      color: #ffffff;
+      background: #71c837;      
+      border-color: #71c837;
+      border-radius: 5px;
     `;
 
     // 📋 RESULTADOS
@@ -77,10 +80,12 @@ export default class JukeboxUI {
     const input = document.createElement("input");
     input.placeholder = placeholder;
     input.style = `
-      width: 88%;
-      padding: 20px;
+      width: 80%;
+      padding: 10px;
       margin-bottom: 4px;
-      font-size: 14px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #c9985d;
     `;
     return input;
   }
@@ -157,8 +162,8 @@ export default class JukeboxUI {
       const item = document.createElement("div");
       item.style = `
         cursor: pointer;
-        padding: 6px;
-        border-bottom: 1px solid #639780;
+        padding: 7px;
+        border-bottom: 1px solid #c9985d;
         display: flex;
         align-items: center;
         gap: 8px;

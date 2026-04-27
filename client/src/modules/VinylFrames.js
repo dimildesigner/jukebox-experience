@@ -39,8 +39,8 @@ export default class VinylFrames {
     this.pauseFrame.name = "vinylPause";
 
     // 🎯 AGORA SIM podemos rotacionar (pois já existem)
-    this.playFrame.rotation.y = 0.3;
-    this.pauseFrame.rotation.y = -0.3;
+    this.playFrame.rotation.y = 0.25;
+    this.pauseFrame.rotation.y = -0.25;
 
     // adicionar ao grupo
     this.group.add(this.playFrame);
