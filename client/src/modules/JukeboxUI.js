@@ -30,12 +30,12 @@ export default class JukeboxUI {
       top: 70px;
       left: 40px;
       width: 380px;
-      background: rgba(245, 226, 170, 0.9);
+      background: rgba(255, 248, 194, 0.9);
       padding: 12px;
       display: none;
       z-index: 10;
-      border: 6px solid #c9985d;
-      border-radius: 8px;
+      border: 8px solid #a31b27;
+      border-radius: 2px;
     `;
 
     // 🔍 INPUTS
@@ -51,11 +51,14 @@ export default class JukeboxUI {
       padding: 10px;
       margin-top: 10px;
       cursor: pointer;
+      font-family: sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 600;
       font-size: 18px;
-      font-weight: bold;
-      color: #ffffff;
-      background: #71c837;      
-      border-color: #71c837;
+      // font-weight: bold;
+      color: #fcf3af;
+      background: #a31b27;     
+      border-color: #a31b27;
       border-radius: 5px;
     `;
 
@@ -85,7 +88,7 @@ export default class JukeboxUI {
       margin-bottom: 4px;
       font-size: 16px;
       border-radius: 5px;
-      border: 1px solid #c9985d;
+      border: 1px solid #e2b968;
     `;
     return input;
   }
@@ -163,7 +166,7 @@ export default class JukeboxUI {
       item.style = `
         cursor: pointer;
         padding: 7px;
-        border-bottom: 1px solid #c9985d;
+        border-bottom: 1px solid #e2b968;
         display: flex;
         align-items: center;
         gap: 8px;
