@@ -1,3 +1,4 @@
+const API_URL = "https://jukebox-experience.onrender.com";
 export default class JukeboxUI {
   constructor(experience) {
     this.experience = experience;
@@ -122,9 +123,10 @@ export default class JukeboxUI {
     const query = parts.join(" ");
 
     try {
-      const res = await fetch(
-        `http://localhost:3001/search?q=${encodeURIComponent(query)}`,
-      );
+      const res = await fetch(`${API_URL}/search?q=${query}`);
+      // const res = await fetch(
+      //   `http://localhost:3001/search?q=${encodeURIComponent(query)}`,
+      // );
 
       const data = await res.json();
 
