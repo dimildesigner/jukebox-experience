@@ -13,9 +13,9 @@ export default class JukeboxUI {
     this.button.innerHTML = "☰";
     this.button.style = `
       position: fixed;
-      top: 30px;
+      top: 20px;
       left: 80px;
-      font-size: 40px;
+      font-size: 30px;
       cursor: pointer;
       z-index: 10;
       color: #fff49d;
@@ -28,7 +28,7 @@ export default class JukeboxUI {
     this.panel = document.createElement("div");
     this.panel.style = `
       position: fixed;
-      top: 90px;
+      top: 80px;
       left: 40px;
       width: 380px;
       background: rgba(250, 226, 196, 0.9);
@@ -87,7 +87,7 @@ export default class JukeboxUI {
       width: 80%;
       padding: 10px;
       margin-bottom: 4px;
-      font-size: 16px;
+      font-size: 14px;
       border-radius: 5px;
       border: 1px solid #e2b968;
     `;
