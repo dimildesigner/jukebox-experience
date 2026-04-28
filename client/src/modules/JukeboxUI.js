@@ -28,7 +28,7 @@ export default class JukeboxUI {
     this.panel = document.createElement("div");
     this.panel.style = `
       position: fixed;
-      top: 80px;
+      top: 70px;
       left: 40px;
       width: 380px;
       background: rgba(250, 226, 196, 0.9);
@@ -36,7 +36,7 @@ export default class JukeboxUI {
       display: none;
       z-index: 10;
       border: 8px solid #a31b27;
-      border-radius: 2px;
+      // border-radius: 2px;
     `;
 
     // 🔍 INPUTS
