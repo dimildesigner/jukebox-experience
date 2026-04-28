@@ -49,13 +49,13 @@ export default class JukeboxUI {
     this.searchBtn.innerText = "Buscar";
     this.searchBtn.style = `
       width: 50%;
-      padding: 10px;
-      margin-top: 10px;
+      padding: 8px;
+      margin-top: 8px;
       cursor: pointer;
       font-family: sans-serif;
       font-optical-sizing: auto;
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: 700;
+      font-size: 15px;
       // font-weight: bold;
       color: #fcf3af;
       background: #a31b27;     
@@ -166,11 +166,12 @@ export default class JukeboxUI {
       const item = document.createElement("div");
       item.style = `
         cursor: pointer;
-        padding: 7px;
+        padding: 8px;
         border-bottom: 1px solid #e2b968;
         display: flex;
         align-items: center;
-        gap: 8px;
+        font-family: sans-serif;
+        gap: 6px;
       `;
 
       // miniatura do álbum
