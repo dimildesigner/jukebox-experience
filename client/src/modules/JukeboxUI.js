@@ -13,13 +13,14 @@ export default class JukeboxUI {
     this.button.innerHTML = "☰";
     this.button.style = `
       position: fixed;
-      top: 20px;
+      top: 30px;
       left: 80px;
-      font-size: 36px;
+      font-size: 40px;
       cursor: pointer;
       z-index: 10;
-      color: white;
+      color: #fff49d;
       user-select: none;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
     `;
     document.body.appendChild(this.button);
 
@@ -27,10 +28,10 @@ export default class JukeboxUI {
     this.panel = document.createElement("div");
     this.panel.style = `
       position: fixed;
-      top: 70px;
+      top: 90px;
       left: 40px;
       width: 380px;
-      background: rgba(255, 248, 194, 0.9);
+      background: rgba(250, 226, 196, 0.9);
       padding: 12px;
       display: none;
       z-index: 10;
