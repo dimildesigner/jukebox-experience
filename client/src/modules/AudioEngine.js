@@ -19,7 +19,20 @@ export default class AudioEngine {
 
     this.context = null;
     this.analyser = null;
-    this.source = null; // ← guarda referência ao MediaElementSource
+    this.source = null;
+
+    // Callbacks de estado
+    this._onPlayStateChange = null;
+
+    // Detecta fim natural da faixa
+    this.audio.addEventListener("ended", () => {
+      this.isPlaying = false;
+      this._onPlayStateChange?.(false);
+    });
+  }
+
+  onPlayStateChange(fn) {
+    this._onPlayStateChange = fn;
   }
 
   setPlaybackRate(rate) {
@@ -35,54 +48,42 @@ export default class AudioEngine {
   }
 
   initAudio() {
-    // Já inicializado — não recria
     if (this.context) return;
-
     this.context = new (window.AudioContext || window.webkitAudioContext)();
-
-    // Cria o source UMA única vez para this.audio
     this.source = this.context.createMediaElementSource(this.audio);
     this.analyser = this.context.createAnalyser();
     this.analyser.fftSize = 256;
-
     this.source.connect(this.analyser);
     this.analyser.connect(this.context.destination);
   }
 
   play() {
     this.initAudio();
-
-    // Retoma o contexto se estiver suspenso (política de autoplay)
     if (this.context && this.context.state === "suspended") {
       this.context.resume();
     }
-
     this.audio.play().catch(() => {
       console.warn("⚠️ Clique necessário para iniciar áudio");
     });
-
     this.isPlaying = true;
+    this._onPlayStateChange?.(true);
   }
 
   pause() {
     this.audio.pause();
     this.isPlaying = false;
+    this._onPlayStateChange?.(false);
   }
 
-  // Carrega preview de URL externa via proxy do servidor (resolve CORS do iTunes)
   loadFromUrl(url) {
     if (!url) {
       console.log("❌ música sem preview");
       return;
     }
-
     const proxyUrl = `https://jukebox-experience.onrender.com/proxy?url=${encodeURIComponent(url)}`;
-
-    // Troca o src sem recriar o AudioContext nem o MediaElementSource
     this.audio.pause();
     this.audio.src = proxyUrl;
     this.audio.loop = false;
-
     this.play();
   }
 
@@ -96,23 +97,18 @@ export default class AudioEngine {
 
   nextTrack() {
     this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
-
     this.audio.pause();
     this.audio.src = this.tracks[this.currentTrack];
     this.audio.loop = true;
-
     this.play();
   }
 
   getFrequency() {
     if (!this.analyser) return 0;
-
     const data = new Uint8Array(this.analyser.frequencyBinCount);
     this.analyser.getByteFrequencyData(data);
-
     let sum = 0;
     for (let i = 0; i < data.length; i++) sum += data[i];
-
     return sum / data.length / 255;
   }
 

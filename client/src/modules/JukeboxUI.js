@@ -4,207 +4,452 @@ export default class JukeboxUI {
   constructor(experience) {
     this.experience = experience;
     this.isOpen = false;
+    this.activeItem = null;
+    this.currentTrackData = null;
+    this.noteInterval = null;
     this.init();
+
+    // Escuta mudanças de estado do áudio
+    this.experience.audio.onPlayStateChange((playing) => {
+      this.setPlayState(playing);
+    });
   }
 
   init() {
-    // 🍔 BOTÃO
-    this.button = document.createElement("div");
-    this.button.innerHTML = "☰";
-    this.button.style = `
-      position: fixed;
-      top: 18px;
-      left: 80px;
-      font-size: 25px;
-      cursor: pointer;
-      z-index: 10;
-      color: #fff49d;
-      user-select: none;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    this.injectStyles();
+    this.buildHamburger();
+    this.buildDrawer();
+    this.buildVinylWidget();
+    this.buildMiniPlayer();
+  }
+
+  injectStyles() {
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes floatNote {
+        0%   { opacity: 0; transform: translateY(0) scale(0.8); }
+        20%  { opacity: 1; }
+        80%  { opacity: 0.7; }
+        100% { opacity: 0; transform: translateY(-70px) scale(1.1); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.4; }
+      }
+      @keyframes drawerIn  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+      @keyframes drawerOut { from { transform: translateX(0); }    to { transform: translateX(-100%); } }
+      @keyframes playerIn  { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+      .jk-drawer {
+        position: fixed; top: 0; left: 0; height: 100%;
+        width: min(360px, 90vw);
+        background: rgba(20, 14, 10, 0.92);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        z-index: 100;
+        display: flex; flex-direction: column;
+        box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      }
+      .jk-drawer.open { transform: translateX(0); }
+
+      .jk-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+        z-index: 99; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      .jk-overlay.open { opacity: 1; pointer-events: all; }
+
+      .jk-drawer-header {
+        padding: 20px 16px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        flex-shrink: 0;
+      }
+      .jk-drawer-title {
+        font-size: 18px; font-weight: 700;
+        color: #f5e6c8; letter-spacing: 0.03em;
+        margin-bottom: 14px;
+      }
+
+      .jk-input {
+        width: 100%; padding: 10px 12px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 8px; color: #f5e6c8;
+        font-size: 14px; margin-bottom: 8px;
+        outline: none; transition: border-color 0.2s;
+      }
+      .jk-input::placeholder { color: rgba(245,230,200,0.35); }
+      .jk-input:focus { border-color: rgba(113,200,55,0.6); }
+
+      .jk-search-btn {
+        width: 100%; padding: 12px;
+        background: #71c837; border: none;
+        border-radius: 8px; color: #0a1a06;
+        font-size: 15px; font-weight: 700;
+        cursor: pointer; transition: background 0.2s, transform 0.1s;
+      }
+      .jk-search-btn:hover   { background: #86d44f; }
+      .jk-search-btn:active  { transform: scale(0.98); }
+      .jk-search-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+      .jk-results {
+        flex: 1; overflow-y: auto; padding: 10px 0;
+        scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
+      }
+      .jk-results::-webkit-scrollbar { width: 4px; }
+      .jk-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+      .jk-track-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 16px; cursor: pointer;
+        transition: background 0.15s; border-left: 3px solid transparent;
+      }
+      .jk-track-item:hover   { background: rgba(255,255,255,0.06); }
+      .jk-track-item.active  {
+        background: rgba(113,200,55,0.12);
+        border-left-color: #71c837;
+      }
+      .jk-track-item.no-preview { opacity: 0.45; cursor: not-allowed; }
+
+      .jk-track-art {
+        width: 44px; height: 44px; border-radius: 6px;
+        object-fit: cover; flex-shrink: 0;
+        background: rgba(255,255,255,0.08);
+      }
+      .jk-track-info { flex: 1; min-width: 0; }
+      .jk-track-name {
+        font-size: 13px; font-weight: 600; color: #f5e6c8;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .jk-track-artist {
+        font-size: 12px; color: rgba(245,230,200,0.5);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        margin-top: 2px;
+      }
+      .jk-track-play-icon {
+        font-size: 14px; color: #71c837;
+        animation: pulse 1.4s ease-in-out infinite;
+        flex-shrink: 0;
+      }
+      .jk-error {
+        padding: 14px 16px; font-size: 13px;
+        color: #e8705a; line-height: 1.5;
+      }
+
+      /* Mini player */
+      .jk-mini-player {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(20,14,10,0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 16px; z-index: 98;
+        transform: translateY(100%); opacity: 0;
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s;
+      }
+      .jk-mini-player.visible { transform: translateY(0); opacity: 1; }
+      .jk-mini-art {
+        width: 40px; height: 40px; border-radius: 6px;
+        object-fit: cover; flex-shrink: 0;
+        background: rgba(255,255,255,0.08);
+      }
+      .jk-mini-info { flex: 1; min-width: 0; }
+      .jk-mini-name {
+        font-size: 13px; font-weight: 600; color: #f5e6c8;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .jk-mini-artist {
+        font-size: 12px; color: rgba(245,230,200,0.5);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .jk-mini-eq {
+        display: flex; gap: 2px; align-items: flex-end;
+        height: 18px; flex-shrink: 0;
+      }
+      .jk-mini-bar {
+        width: 3px; background: #71c837; border-radius: 2px;
+        animation: pulse 0.8s ease-in-out infinite;
+      }
+      .jk-mini-bar:nth-child(2) { animation-delay: 0.2s; height: 10px; }
+      .jk-mini-bar:nth-child(3) { animation-delay: 0.4s; height: 16px; }
+      .jk-mini-bar:nth-child(1) { height: 12px; }
+
+      /* Vinyl widget */
+      .jk-vinyl-widget {
+        position: fixed; bottom: 72px; right: 20px;
+        z-index: 97; width: 72px; height: 72px;
+        pointer-events: none; opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .jk-vinyl-widget.playing { opacity: 1; }
+      .jk-vinyl-disc {
+        width: 72px; height: 72px; border-radius: 50%;
+        background: radial-gradient(circle at 50% 50%,
+          #555 0%, #555 12%,
+          #1a1a1a 12%, #1a1a1a 18%,
+          #2a2a2a 18%, #2a2a2a 22%,
+          #111 22%, #111 40%,
+          #222 40%, #222 44%,
+          #111 44%, #111 60%,
+          #222 60%, #222 64%,
+          #111 64%, #111 100%
+        );
+        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        animation: spin 2.5s linear infinite;
+        animation-play-state: paused;
+        position: relative;
+      }
+      .jk-vinyl-disc.spinning { animation-play-state: running; }
+      .jk-vinyl-disc::after {
+        content: ''; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 14px; height: 14px; border-radius: 50%;
+        background: #71c837;
+      }
+      .jk-note {
+        position: absolute; font-size: 16px;
+        animation: floatNote 2s ease-out forwards;
+        pointer-events: none;
+      }
+
+      /* Hamburger */
+      .jk-hamburger {
+        position: fixed; top: 20px; left: 20px;
+        width: 42px; height: 42px;
+        background: rgba(20,14,10,0.75);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px; cursor: pointer;
+        z-index: 101; display: flex;
+        align-items: center; justify-content: center;
+        font-size: 20px; color: #f5e6c8;
+        user-select: none; transition: background 0.2s;
+      }
+      .jk-hamburger:hover { background: rgba(40,28,20,0.9); }
     `;
-    document.body.appendChild(this.button);
+    document.head.appendChild(style);
+  }
 
-    // 🎛️ PAINEL
-    this.panel = document.createElement("div");
-    this.panel.style = `
-      position: fixed;
-      top: 60px;
-      left: 40px;
-      width: 380px;
-      background: rgba(250, 226, 196, 0.9);
-      padding: 12px;
-      display: none;
-      z-index: 10;
-      border: 8px solid #a31b27;
-      // border-radius: 2px;
+  buildHamburger() {
+    this.hamburger = document.createElement("div");
+    this.hamburger.className = "jk-hamburger";
+    this.hamburger.innerHTML = "☰";
+    this.hamburger.onclick = () => this.toggleDrawer();
+    document.body.appendChild(this.hamburger);
+  }
+
+  buildDrawer() {
+    // Overlay
+    this.overlay = document.createElement("div");
+    this.overlay.className = "jk-overlay";
+    this.overlay.onclick = () => this.closeDrawer();
+    document.body.appendChild(this.overlay);
+
+    // Drawer
+    this.drawer = document.createElement("div");
+    this.drawer.className = "jk-drawer";
+    this.drawer.innerHTML = `
+      <div class="jk-drawer-header">
+        <div class="jk-drawer-title">🎵 Jukebox</div>
+        <input class="jk-input" id="jk-artist" placeholder="Artista" />
+        <input class="jk-input" id="jk-album"  placeholder="Álbum" />
+        <input class="jk-input" id="jk-track"  placeholder="Música" />
+        <button class="jk-search-btn" id="jk-search-btn">Buscar</button>
+      </div>
+      <div class="jk-results" id="jk-results"></div>
     `;
+    document.body.appendChild(this.drawer);
 
-    // 🔍 INPUTS
-    this.artistInput = this.createInput("Artista");
-    this.albumInput  = this.createInput("Álbum");
-    this.trackInput  = this.createInput("Música");
+    this.artistInput = this.drawer.querySelector("#jk-artist");
+    this.albumInput  = this.drawer.querySelector("#jk-album");
+    this.trackInput  = this.drawer.querySelector("#jk-track");
+    this.searchBtn   = this.drawer.querySelector("#jk-search-btn");
+    this.resultList  = this.drawer.querySelector("#jk-results");
 
-    // 🔘 BOTÃO DE BUSCA
-    this.searchBtn = document.createElement("button");
-    this.searchBtn.innerText = "Buscar";
-    this.searchBtn.style = `
-      width: 50%;
-      padding: 6px;
-      margin-top: 6px;
-      cursor: pointer;
-      font-family: sans-serif;
-      font-optical-sizing: auto;
-      font-weight: 700;
-      font-size: 15px;
-      // font-weight: bold;
-      color: #fcf3af;
-      background: #a31b27;     
-      border-color: #a31b27;
-      border-radius: 5px;
-    `;
-
-    // 📋 RESULTADOS
-    this.resultList = document.createElement("div");
-    this.resultList.style.marginTop = "10px";
-
-    // montar painel
-    this.panel.appendChild(this.artistInput);
-    this.panel.appendChild(this.albumInput);
-    this.panel.appendChild(this.trackInput);
-    this.panel.appendChild(this.searchBtn);
-    this.panel.appendChild(this.resultList);
-    document.body.appendChild(this.panel);
-
-    // 🎯 EVENTOS
-    this.button.onclick = () => this.toggleMenu();
     this.searchBtn.onclick = () => this.search();
+
+    // Enter nos inputs dispara busca
+    [this.artistInput, this.albumInput, this.trackInput].forEach(input => {
+      input.addEventListener("keydown", e => { if (e.key === "Enter") this.search(); });
+    });
   }
 
-  createInput(placeholder) {
-    const input = document.createElement("input");
-    input.placeholder = placeholder;
-    input.style = `
-      width: 94%;
-      padding: 8px;
-      margin-bottom: 3px;
-      font-size: 12px;
-      border-radius: 5px;
-      border: 1px solid #e2b968;
+  buildVinylWidget() {
+    this.vinylWidget = document.createElement("div");
+    this.vinylWidget.className = "jk-vinyl-widget";
+    this.vinylWidget.innerHTML = `<div class="jk-vinyl-disc" id="jk-disc"></div>`;
+    document.body.appendChild(this.vinylWidget);
+    this.disc = this.vinylWidget.querySelector("#jk-disc");
+  }
+
+  buildMiniPlayer() {
+    this.miniPlayer = document.createElement("div");
+    this.miniPlayer.className = "jk-mini-player";
+    this.miniPlayer.innerHTML = `
+      <img class="jk-mini-art" id="jk-mini-art" src="" alt="" />
+      <div class="jk-mini-info">
+        <div class="jk-mini-name" id="jk-mini-name">—</div>
+        <div class="jk-mini-artist" id="jk-mini-artist">—</div>
+      </div>
+      <div class="jk-mini-eq" id="jk-mini-eq">
+        <div class="jk-mini-bar"></div>
+        <div class="jk-mini-bar"></div>
+        <div class="jk-mini-bar"></div>
+      </div>
     `;
-    return input;
+    document.body.appendChild(this.miniPlayer);
   }
 
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-    this.panel.style.display = this.isOpen ? "block" : "none";
-    this.button.innerHTML = this.isOpen ? "✖" : "☰";
+  toggleDrawer() {
+    this.isOpen ? this.closeDrawer() : this.openDrawer();
+  }
+
+  openDrawer() {
+    this.isOpen = true;
+    this.drawer.classList.add("open");
+    this.overlay.classList.add("open");
+    this.hamburger.innerHTML = "✕";
+  }
+
+  closeDrawer() {
+    this.isOpen = false;
+    this.drawer.classList.remove("open");
+    this.overlay.classList.remove("open");
+    this.hamburger.innerHTML = "☰";
+  }
+
+  setPlayState(playing) {
+    if (playing) {
+      this.disc.classList.add("spinning");
+      this.vinylWidget.classList.add("playing");
+      if (!this.noteInterval) {
+        this.noteInterval = setInterval(() => this.spawnNote(), 900);
+      }
+      if (this.currentTrackData) {
+        this.miniPlayer.classList.add("visible");
+      }
+    } else {
+      this.disc.classList.remove("spinning");
+      this.vinylWidget.classList.remove("playing");
+      clearInterval(this.noteInterval);
+      this.noteInterval = null;
+      this.miniPlayer.classList.remove("visible");
+    }
+  }
+
+  spawnNote() {
+    const notes = ["♩", "♪", "♫", "♬"];
+    const note = document.createElement("span");
+    note.className = "jk-note";
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.cssText = `
+      left: ${Math.random() * 80}px;
+      bottom: ${68 + Math.random() * 10}px;
+      color: hsl(${80 + Math.random() * 40}, 80%, ${60 + Math.random() * 20}%);
+    `;
+    this.vinylWidget.appendChild(note);
+    setTimeout(() => note.remove(), 2100);
   }
 
   async search() {
     const parts = [];
-
     if (this.artistInput.value) parts.push(`artist:${this.artistInput.value}`);
     if (this.albumInput.value)  parts.push(`album:${this.albumInput.value}`);
     if (this.trackInput.value)  parts.push(`track:${this.trackInput.value}`);
 
     if (parts.length === 0) {
-      alert("Digite algo para buscar");
+      this.showError("Digite pelo menos um campo para buscar");
       return;
     }
 
     const query = parts.join(" ");
-
-    this.searchBtn.innerText = "Buscando...";
+    this.searchBtn.textContent = "Buscando...";
     this.searchBtn.disabled = true;
 
     try {
       const res  = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
 
-      console.log("🔍 resposta completa:", data);
-
-      // ❌ Erro vindo do servidor
       if (data.error) {
-        const msg = typeof data.error === "string"
-          ? data.error
-          : data.error.message || JSON.stringify(data.error);
-        console.error("❌ Erro da API:", msg);
+        const msg = typeof data.error === "string" ? data.error : data.error.message || JSON.stringify(data.error);
         this.showError(`Erro: ${msg}`);
         return;
       }
-
-      // ⚠️ iTunes retorna { resultCount, results[] }
       if (!data.results || data.results.length === 0) {
         this.showError("Nenhum resultado encontrado");
         return;
       }
-
       this.renderResults(data.results);
-
     } catch (err) {
-      console.error("Erro na busca:", err);
       this.showError("Erro de conexão com o servidor");
     } finally {
-      this.searchBtn.innerText = "Buscar";
+      this.searchBtn.textContent = "Buscar";
       this.searchBtn.disabled = false;
     }
   }
 
   showError(msg) {
-    this.resultList.innerHTML = `<div style="color: red; padding: 10px; font-size: 13px;">${msg}</div>`;
+    this.resultList.innerHTML = `<div class="jk-error">${msg}</div>`;
   }
 
   renderResults(tracks) {
     this.resultList.innerHTML = "";
+    this.activeItem = null;
 
     tracks.forEach((track) => {
-      // iTunes: trackName, artistName, previewUrl, artworkUrl60
-      const name   = track.trackName   || "Desconhecido";
-      const artist = track.artistName  || "Desconhecido";
+      const name    = track.trackName  || "Desconhecido";
+      const artist  = track.artistName || "Desconhecido";
       const preview = track.previewUrl || null;
+      const art     = track.artworkUrl60 || "";
 
       const item = document.createElement("div");
-      item.style = `
-        cursor: pointer;
-        padding: 6px 0 6px 8px;
-        border-bottom: 1px solid #e2b968;
-        display: flex;
-        align-items: center;
-        font-family: sans-serif;
-        gap: 5px;
+      item.className = "jk-track-item" + (preview ? "" : " no-preview");
+
+      item.innerHTML = `
+        ${art ? `<img class="jk-track-art" src="${art.replace('60x60', '100x100')}" alt="" loading="lazy" />` : `<div class="jk-track-art"></div>`}
+        <div class="jk-track-info">
+          <div class="jk-track-name">${name}</div>
+          <div class="jk-track-artist">${artist}</div>
+        </div>
+        ${preview ? `<span class="jk-track-play-icon" style="display:none">▶</span>` : `<span style="font-size:11px;color:rgba(245,230,200,0.3)">sem preview</span>`}
       `;
 
-      // miniatura do álbum
-      if (track.artworkUrl60) {
-        const img = document.createElement("img");
-        img.src = track.artworkUrl60;
-        img.style = "width:40px;height:40px;border-radius:4px;flex-shrink:0;";
-        item.appendChild(img);
+      if (preview) {
+        item.onclick = () => {
+          // Remove active do item anterior
+          if (this.activeItem) {
+            this.activeItem.classList.remove("active");
+            const icon = this.activeItem.querySelector(".jk-track-play-icon");
+            if (icon) icon.style.display = "none";
+          }
+
+          // Ativa este item
+          item.classList.add("active");
+          const icon = item.querySelector(".jk-track-play-icon");
+          if (icon) icon.style.display = "block";
+          this.activeItem = item;
+
+          // Atualiza dados da faixa atual
+          this.currentTrackData = { name, artist, art };
+          this.updateMiniPlayer(name, artist, art);
+
+          this.experience.audio.loadFromUrl(preview);
+        };
       }
-
-      const label = document.createElement("span");
-      label.innerText = `${name} — ${artist}`;
-      label.style = "font-size:12px;";
-      item.appendChild(label);
-
-      // indicador visual se não tiver preview
-      if (!preview) {
-        label.style.color = "#999";
-        label.title = "Sem preview disponível";
-      }
-
-      item.onclick = () => {
-        console.log("🎵 tocar:", preview);
-
-        if (!preview) {
-          alert("Essa música não tem preview disponível 😢");
-          return;
-        }
-
-        this.experience.audio.loadFromUrl(preview);
-      };
 
       this.resultList.appendChild(item);
     });
+  }
+
+  updateMiniPlayer(name, artist, art) {
+    this.miniPlayer.querySelector("#jk-mini-name").textContent   = name;
+    this.miniPlayer.querySelector("#jk-mini-artist").textContent = artist;
+    const img = this.miniPlayer.querySelector("#jk-mini-art");
+    img.src = art ? art.replace("60x60", "80x80") : "";
+    img.style.display = art ? "block" : "none";
   }
 }
