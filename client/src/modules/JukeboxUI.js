@@ -13,9 +13,9 @@ export default class JukeboxUI {
     this.button.innerHTML = "☰";
     this.button.style = `
       position: fixed;
-      top: 20px;
+      top: 18px;
       left: 80px;
-      font-size: 30px;
+      font-size: 25px;
       cursor: pointer;
       z-index: 10;
       color: #fff49d;
@@ -28,7 +28,7 @@ export default class JukeboxUI {
     this.panel = document.createElement("div");
     this.panel.style = `
       position: fixed;
-      top: 70px;
+      top: 60px;
       left: 40px;
       width: 380px;
       background: rgba(250, 226, 196, 0.9);
@@ -49,8 +49,8 @@ export default class JukeboxUI {
     this.searchBtn.innerText = "Buscar";
     this.searchBtn.style = `
       width: 50%;
-      padding: 8px;
-      margin-top: 8px;
+      padding: 6px;
+      margin-top: 6px;
       cursor: pointer;
       font-family: sans-serif;
       font-optical-sizing: auto;
@@ -84,10 +84,10 @@ export default class JukeboxUI {
     const input = document.createElement("input");
     input.placeholder = placeholder;
     input.style = `
-      width: 80%;
-      padding: 10px;
-      margin-bottom: 4px;
-      font-size: 14px;
+      width: 94%;
+      padding: 8px;
+      margin-bottom: 3px;
+      font-size: 12px;
       border-radius: 5px;
       border: 1px solid #e2b968;
     `;
@@ -166,12 +166,12 @@ export default class JukeboxUI {
       const item = document.createElement("div");
       item.style = `
         cursor: pointer;
-        padding: 8px;
+        padding: 6px 0 6px 8px;
         border-bottom: 1px solid #e2b968;
         display: flex;
         align-items: center;
         font-family: sans-serif;
-        gap: 6px;
+        gap: 5px;
       `;
 
       // miniatura do álbum
@@ -184,7 +184,7 @@ export default class JukeboxUI {
 
       const label = document.createElement("span");
       label.innerText = `${name} — ${artist}`;
-      label.style = "font-size:13px;";
+      label.style = "font-size:12px;";
       item.appendChild(label);
 
       // indicador visual se não tiver preview
