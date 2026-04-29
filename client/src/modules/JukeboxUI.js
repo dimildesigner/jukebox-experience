@@ -56,7 +56,7 @@ export default class JukeboxUI {
       .jk-drawer.open { transform: translateX(0); }
 
       .jk-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+        position: fixed; inset: 0; background: rgba(10, 10, 10, 0.75);
         z-index: 99; opacity: 0; pointer-events: none;
         transition: opacity 0.3s;
       }
@@ -68,16 +68,27 @@ export default class JukeboxUI {
         flex-shrink: 0;
       }
       .jk-drawer-title {
-        font-size: 18px; font-weight: 700;
-        color: #f5e6c8; letter-spacing: 0.03em;
-        margin-bottom: 14px;
+        font-family: sans-serif;
+        font-size: 22px; font-weight: 700;
+        color: #a31b27; letter-spacing: 0.03em;
+        margin-top: 35px;
+        margin-bottom: 12px;
+      }
+
+      .jk-drawer-title span {      
+        color: #71c837;
+      }
+
+      .jk-drawer-title span.bco {      
+        color: #fafbf9;
       }
 
       .jk-input {
-        width: 100%; padding: 10px 12px;
-        background: rgba(255,255,255,0.06);
+        width: 90%; padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.13);
         border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 8px; color: #f5e6c8;
+        border-radius: 4px; color: #f5e6c8;
+        font-family: sans-serif;
         font-size: 14px; margin-bottom: 8px;
         outline: none; transition: border-color 0.2s;
       }
@@ -85,9 +96,10 @@ export default class JukeboxUI {
       .jk-input:focus { border-color: rgba(113,200,55,0.6); }
 
       .jk-search-btn {
-        width: 100%; padding: 12px;
+        width: 60%; padding: 8px;
         background: #71c837; border: none;
-        border-radius: 8px; color: #0a1a06;
+        border-radius: 4px; color: #0a1a06;
+        font-family: sans-serif;
         font-size: 15px; font-weight: 700;
         cursor: pointer; transition: background 0.2s, transform 0.1s;
       }
@@ -121,21 +133,24 @@ export default class JukeboxUI {
       }
       .jk-track-info { flex: 1; min-width: 0; }
       .jk-track-name {
+        font-family: sans-serif;
         font-size: 13px; font-weight: 600; color: #f5e6c8;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .jk-track-artist {
+        font-family: sans-serif;
         font-size: 12px; color: rgba(245,230,200,0.5);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         margin-top: 2px;
       }
       .jk-track-play-icon {
+        font-family: sans-serif;
         font-size: 14px; color: #71c837;
         animation: pulse 1.4s ease-in-out infinite;
         flex-shrink: 0;
       }
       .jk-error {
-        padding: 14px 16px; font-size: 13px;
+        padding: 16px 18px; font-family: sans-serif; font-size: 14px;
         color: #e8705a; line-height: 1.5;
       }
 
@@ -159,10 +174,12 @@ export default class JukeboxUI {
       }
       .jk-mini-info { flex: 1; min-width: 0; }
       .jk-mini-name {
+        font-family: sans-serif;
         font-size: 13px; font-weight: 600; color: #f5e6c8;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .jk-mini-artist {
+        font-family: sans-serif;
         font-size: 12px; color: rgba(245,230,200,0.5);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
@@ -187,23 +204,35 @@ export default class JukeboxUI {
       }
       .jk-vinyl-widget.playing { opacity: 1; }
       .jk-vinyl-disc {
-        width: 72px; height: 72px; border-radius: 50%;
-        background: radial-gradient(circle at 50% 50%,
-          #555 0%, #555 12%,
-          #1a1a1a 12%, #1a1a1a 18%,
-          #2a2a2a 18%, #2a2a2a 22%,
-          #111 22%, #111 40%,
-          #222 40%, #222 44%,
-          #111 44%, #111 60%,
-          #222 60%, #222 64%,
-          #111 64%, #111 100%
+        width: 62px; height: 62px; border-radius: 50%;
+        background: repeating-radial-gradient(
+          circle,
+          #333,
+          #333 1px,
+          #111 2px,
+          #111 3px
         );
-        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-        animation: spin 2.5s linear infinite;
+        
+        animation: spin 3s linear infinite;
+        // animation: girar 3s linear infinite;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.72);
+        
         animation-play-state: paused;
         position: relative;
       }
+
+      // /* Keyframes para a rotação */
+      // @keyframes girar {
+      //   from {
+      //     transform: rotate(0deg);
+      //   }
+      //   to {
+      //     transform: rotate(360deg);
+      //   }
+      // }
+
       .jk-vinyl-disc.spinning { animation-play-state: running; }
+
       .jk-vinyl-disc::after {
         content: ''; position: absolute;
         top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -218,9 +247,9 @@ export default class JukeboxUI {
 
       /* Hamburger */
       .jk-hamburger {
-        position: fixed; top: 20px; left: 20px;
-        width: 42px; height: 42px;
-        background: rgba(20,14,10,0.75);
+        position: fixed; top: 15px; left: 15px;
+        width: 32px; height: 32px;
+        background: rgb(165, 28, 39, 0.75);
         backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         border: 1px solid rgba(255,255,255,0.15);
         border-radius: 10px; cursor: pointer;
@@ -229,7 +258,7 @@ export default class JukeboxUI {
         font-size: 20px; color: #f5e6c8;
         user-select: none; transition: background 0.2s;
       }
-      .jk-hamburger:hover { background: rgba(40,28,20,0.9); }
+      .jk-hamburger:hover { background: rgba(212, 36, 50, 0.9); }
     `;
     document.head.appendChild(style);
   }
@@ -254,7 +283,7 @@ export default class JukeboxUI {
     this.drawer.className = "jk-drawer";
     this.drawer.innerHTML = `
       <div class="jk-drawer-header">
-        <div class="jk-drawer-title">🎵 Jukebox</div>
+        <div class="jk-drawer-title"> <span> ♫ ♩ </span> Jukebox <span class="bco"> Experience </span> <span> ♪ ♬ </span></div>
         <input class="jk-input" id="jk-artist" placeholder="Artista" />
         <input class="jk-input" id="jk-album"  placeholder="Álbum" />
         <input class="jk-input" id="jk-track"  placeholder="Música" />
@@ -265,16 +294,18 @@ export default class JukeboxUI {
     document.body.appendChild(this.drawer);
 
     this.artistInput = this.drawer.querySelector("#jk-artist");
-    this.albumInput  = this.drawer.querySelector("#jk-album");
-    this.trackInput  = this.drawer.querySelector("#jk-track");
-    this.searchBtn   = this.drawer.querySelector("#jk-search-btn");
-    this.resultList  = this.drawer.querySelector("#jk-results");
+    this.albumInput = this.drawer.querySelector("#jk-album");
+    this.trackInput = this.drawer.querySelector("#jk-track");
+    this.searchBtn = this.drawer.querySelector("#jk-search-btn");
+    this.resultList = this.drawer.querySelector("#jk-results");
 
     this.searchBtn.onclick = () => this.search();
 
     // Enter nos inputs dispara busca
-    [this.artistInput, this.albumInput, this.trackInput].forEach(input => {
-      input.addEventListener("keydown", e => { if (e.key === "Enter") this.search(); });
+    [this.artistInput, this.albumInput, this.trackInput].forEach((input) => {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") this.search();
+      });
     });
   }
 
@@ -358,8 +389,8 @@ export default class JukeboxUI {
   async search() {
     const parts = [];
     if (this.artistInput.value) parts.push(`artist:${this.artistInput.value}`);
-    if (this.albumInput.value)  parts.push(`album:${this.albumInput.value}`);
-    if (this.trackInput.value)  parts.push(`track:${this.trackInput.value}`);
+    if (this.albumInput.value) parts.push(`album:${this.albumInput.value}`);
+    if (this.trackInput.value) parts.push(`track:${this.trackInput.value}`);
 
     if (parts.length === 0) {
       this.showError("Digite pelo menos um campo para buscar");
@@ -371,11 +402,16 @@ export default class JukeboxUI {
     this.searchBtn.disabled = true;
 
     try {
-      const res  = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(
+        `${API_URL}/search?q=${encodeURIComponent(query)}`,
+      );
       const data = await res.json();
 
       if (data.error) {
-        const msg = typeof data.error === "string" ? data.error : data.error.message || JSON.stringify(data.error);
+        const msg =
+          typeof data.error === "string"
+            ? data.error
+            : data.error.message || JSON.stringify(data.error);
         this.showError(`Erro: ${msg}`);
         return;
       }
@@ -401,16 +437,16 @@ export default class JukeboxUI {
     this.activeItem = null;
 
     tracks.forEach((track) => {
-      const name    = track.trackName  || "Desconhecido";
-      const artist  = track.artistName || "Desconhecido";
+      const name = track.trackName || "Desconhecido";
+      const artist = track.artistName || "Desconhecido";
       const preview = track.previewUrl || null;
-      const art     = track.artworkUrl60 || "";
+      const art = track.artworkUrl60 || "";
 
       const item = document.createElement("div");
       item.className = "jk-track-item" + (preview ? "" : " no-preview");
 
       item.innerHTML = `
-        ${art ? `<img class="jk-track-art" src="${art.replace('60x60', '100x100')}" alt="" loading="lazy" />` : `<div class="jk-track-art"></div>`}
+        ${art ? `<img class="jk-track-art" src="${art.replace("60x60", "100x100")}" alt="" loading="lazy" />` : `<div class="jk-track-art"></div>`}
         <div class="jk-track-info">
           <div class="jk-track-name">${name}</div>
           <div class="jk-track-artist">${artist}</div>
@@ -446,7 +482,7 @@ export default class JukeboxUI {
   }
 
   updateMiniPlayer(name, artist, art) {
-    this.miniPlayer.querySelector("#jk-mini-name").textContent   = name;
+    this.miniPlayer.querySelector("#jk-mini-name").textContent = name;
     this.miniPlayer.querySelector("#jk-mini-artist").textContent = artist;
     const img = this.miniPlayer.querySelector("#jk-mini-art");
     img.src = art ? art.replace("60x60", "80x80") : "";
