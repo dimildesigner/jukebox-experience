@@ -247,10 +247,10 @@ export default class JukeboxUI {
         user-select: none; transition: background 0.2s, box-shadow 0.2s;
         box-shadow: 0 2px 12px rgba(0,0,0,0.4);
       }
-      .jk-hamburger:hover { background: rgb(0, 0, 0); border-top: 2px solid rgba(255, 255, 255, 0.83); box-shadow: 0 4px 20px rgba(0,0,0,0.55); }
+      .jk-hamburger:hover { background: #242124; border-left: 1px solid #242124; border-bottom: 1px solid #242124; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.73); }
       .jk-ham-icon { font-family: sans-serif; font-size: 18px; color: #f5e6c8; line-height: 1; }
-      .jk-ham-label { font-family: sans-serif; font-size: 18px; font-weight: 600; color: rgb(255, 42, 42); letter-spacing: 0.02em; white-space: nowrap; }
-      .jk-ham-label span { color: #71c837;}
+      .jk-ham-label { font-family: sans-serif; font-size: 18px; font-weight: 600; color: #ff00cc; letter-spacing: 0.02em; white-space: nowrap; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.84);}
+      .jk-ham-label span { color: #71f440; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.84);}
       @media (max-width: 480px) { .jk-ham-label { display: none; } }
     `;
     document.head.appendChild(style);
