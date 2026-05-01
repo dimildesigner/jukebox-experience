@@ -133,7 +133,7 @@ export default class JukeboxUI {
       }
       .jk-track-play-icon {
         font-family: sans-serif;
-        font-size: 14px; color: #71c837;
+        font-size: 14px; color: #10fa00 ;
         animation: pulse 1.4s ease-in-out infinite;
         flex-shrink: 0;
       }
@@ -172,11 +172,11 @@ export default class JukeboxUI {
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .jk-mini-eq {
-        display: flex; gap: 2px; align-items: flex-end;
+        display: flex; gap: 3px; align-items: flex-end;
         height: 18px; flex-shrink: 0;
       }
       .jk-mini-bar {
-        width: 3px; background: #71c837; border-radius: 2px;
+        width: 2px; background: #10fa00; border-radius: 2px;
         animation: pulse 0.8s ease-in-out infinite;
       }
       .jk-mini-bar:nth-child(2) { animation-delay: 0.2s; height: 10px; }
