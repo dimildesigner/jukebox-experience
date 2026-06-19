@@ -10,10 +10,10 @@
  </p>
 
  <p>
-   <img src="https://shields.io" alt="GitHub Stars" />
-   <img src="https://shields.io" alt="GitHub Forks" />
-   <img src="https://shields.io" alt="GitHub Repo Size" />
-   <img src="https://shields.io" alt="GitHub Last Commit" />
+   <img alt="GitHub Stars" src="https://shields.io" />
+   <img alt="GitHub Forks" src="https://shields.io" />
+   <img alt="GitHub Repo Size" src="https://shields.io" />
+   <img alt="GitHub Last Commit" src="https://shields.io" />  
  </p>
 
 ---
