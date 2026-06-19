@@ -2,13 +2,13 @@
   <img src="client/public/favicon-512.png" alt="Jukebox Experience Logo" width="120" />
   <h1>🎵 Jukebox Experience</h1>
   <p><strong>Uma experiência musical imersiva em 3D — busque, ouça e sinta a música.</strong></p>
+
   # 🎵 Jukebox Experience
 
-![Status do Deploy](https://shields.io)
-![Visualizações do Repo](https://glitch.me)
-![GitHub Stars](https://shields.io)
-![GitHub Forks](https://shields.io)
-![Licença](https://shields.io)
+![GitHub Org's stars](https://shields.io)
+![GitHub forks](https://shields.io)
+![GitHub repo size](https://shields.io)
+![GitHub last commit](https://shields.io)
 
 ---
 
@@ -17,6 +17,7 @@
 ![Three.js](https://shields.io)
 ![Node.js](https://shields.io)
 ![Vite](https://shields.io)
+
 
   <p>
     <a href="https://jukebox-experience.vercel.app" target="_blank">
