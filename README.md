@@ -18,27 +18,18 @@
 
 ---
 
- ### 🧠 Tecnologias Utilizadas:
-
- <p>
-   <img src="https://shields.io" alt="JavaScript" />
-   <img src="https://shields.io" alt="Three.js" />
-   <img src="https://shields.io" alt="Node.js" />
-   <img src="https://shields.io" alt="Vite" />
- </p>
-
----
+ ### 🧠 Tecnologias utilizadas:
 
   <p>
     <a href="https://jukebox-experience.vercel.app" target="_blank">
       <img alt="Live Demo" src="https://img.shields.io/badge/demo-ao%20vivo-71c837?style=for-the-badge&logo=vercel&logoColor=white" />
     </a>
+    <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-black?style=for-the-badge&logo=javascript&logoColor=white" />
     <img alt="Three.js" src="https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white" />
     <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
     <img alt="Node.js" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
   </p>
 </div>
----
 
 ## ✨ Sobre o projeto
 
