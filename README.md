@@ -24,7 +24,7 @@
     <a href="https://jukebox-experience.vercel.app" target="_blank">
       <img alt="Live Demo" src="https://img.shields.io/badge/demo-ao%20vivo-71c837?style=for-the-badge&logo=vercel&logoColor=white" />
     </a>
-    <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-f1dc4f?style=for-the-badge&logo=javascript&logoColor=white" />
+    <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-f1dc4f?style=for-the-badge&logo=javascript&logoColor=black" />
     <img alt="Three.js" src="https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white" />
     <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
     <img alt="Node.js" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
