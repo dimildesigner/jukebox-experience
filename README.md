@@ -1,34 +1,41 @@
-<div align="center">
-  <img src="client/public/favicon-512.png" alt="Jukebox Experience Logo" width="120" />
-  <h1>🎵 Jukebox Experience</h1>
-  <p><strong>Uma experiência musical imersiva em 3D — busque, ouça e sinta a música.</strong></p>
+<p align="center">
+  <img src="client/public/favicon-512.png" alt="Jukebox Experience Logo" width="150" />
+</p>
+
+<h1 align="center">🎵 Jukebox Experience</h1>
+
+<p align="center">
+  Uma experiência musical imersiva em 3D — busque, ouça e sinta a música.
+</p>
+
+<p align="center">
+  <img src="https://shields.io" alt="GitHub Stars" />
+  <img src="https://shields.io" alt="GitHub Forks" />
+  <img src="https://shields.io" alt="GitHub Repo Size" />
+  <img src="https://shields.io" alt="GitHub Last Commit" />
+</p>
 
 ---
 
-![GitHub Org's stars](https://shields.io)
-![GitHub forks](https://shields.io)
-![GitHub repo size](https://shields.io)
-![GitHub last commit](https://shields.io)
+### 🧠 Tecnologias Utilizadas:
+
+<p align="left">
+  <img src="https://shields.io" alt="JavaScript" />
+  <img src="https://shields.io" alt="Three.js" />
+  <img src="https://shields.io" alt="Node.js" />
+  <img src="https://shields.io" alt="Vite" />
+</p>
 
 ---
 
-🧠 **Tecnologias Utilizadas:**
-![JavaScript](https://shields.io)
-![Three.js](https://shields.io)
-![Node.js](https://shields.io)
-![Vite](https://shields.io)
-
----
-
-  <p>
-    <a href="https://jukebox-experience.vercel.app" target="_blank">
-      <img alt="Live Demo" src="https://img.shields.io/badge/demo-ao%20vivo-71c837?style=for-the-badge&logo=vercel&logoColor=white" />
-    </a>
-    <img alt="Three.js" src="https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white" />
-    <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
-    <img alt="Node.js" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
-  </p>
-</div>
+<p>
+  <a href="https://jukebox-experience.vercel.app" target="_blank">
+    <img alt="Live Demo" src="https://img.shields.io/badge/demo-ao%20vivo-71c837?style=for-the-badge&logo=vercel&logoColor=white" />
+  </a>
+  <img alt="Three.js" src="https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+</p>
 
 ---
 
