@@ -9,13 +9,6 @@
    Uma experiência musical imersiva em 3D — busque, ouça e sinta a música.
  </p>
 
- <p>
-   <img alt="GitHub Stars" src="https://shields.io" />
-   <img alt="GitHub Forks" src="https://shields.io" />
-   <img alt="GitHub Repo Size" src="https://shields.io" />
-   <img alt="GitHub Last Commit" src="https://shields.io" />  
- </p>
-
 ---
 
  ### 🧠 Tecnologias utilizadas:
